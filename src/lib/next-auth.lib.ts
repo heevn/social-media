@@ -1,10 +1,11 @@
-import { AuthFormState } from '@/screens/auth/auth.types'
+import { $host } from '@/app/services/axios.config'
+import { User } from '@/types/user.types'
+import NextAuth from 'next-auth/next'
 import Credentials from 'next-auth/providers/credentials'
 
-export const authOptions = {
+export default NextAuth({
 	providers: [
 		Credentials({
-			name: 'Credentials',
 			credentials: {
 				email: {
 					type: 'email',
@@ -12,32 +13,40 @@ export const authOptions = {
 				password: { type: 'password' },
 			},
 			async authorize(credentials) {
-				const { email, password } = credentials as AuthFormState
+				if (!credentials?.email || !credentials.password) return null
 
-				const { user } = await grafbase.request(GetUserByUsername, {
-					username,
-				})
+				const { data } = await $host.get<User[]>(
+					`/users?filters[email][$eq]=${credentials.email}`
+				)
+				console.log(data)
 
-				if (!user) {
-					const { userCreate } = await grafbase.request(CreateUserByUsername, {
-						username,
-						passwordHash: await hash(password, 12),
-					})
+				return null
+				// if (!data) {
+				// 	const { userCreate } = await grafbase.request(CreateUserByUsername, {
+				// 		username,
+				// 		passwordHash: await hash(password, 12),
+				// 	})
 
-					return {
-						id: userCreate.id,
-						username,
-					}
-				}
+				// 	return {
+				// 		id: userCreate.id,
+				// 		username,
+				// 	}
+				// }
 
-				const isValid = await compare(password, user.passwordHash)
+				// const isValid = await compare(password, user.passwordHash)
 
-				if (!isValid) {
-					throw new Error('Wrong credentials. Try again.')
-				}
+				// if (!isValid) {
+				// 	throw new Error('Wrong credentials. Try again.')
+				// }
 
-				return user
+				// return user
 			},
 		}),
 	],
-}
+
+	callbacks: {
+		session({ session, token, user }) {
+			return session
+		},
+	},
+})
