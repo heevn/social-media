@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function RegisterPage() {
-	return <Auth type='register'/>
+	return <Auth type='Register'/>
 }

@@ -6,7 +6,7 @@ import styles from './Field.module.scss'
 const Field = forwardRef<HTMLInputElement, FieldProps>(
 	({ error, style, Icon, className, ...rest }, ref) => {
 		return (
-			<div className={cn(styles.field, className)} style={style}>
+			<label className={cn(styles.field, className)} style={style}>
 				{Icon && (
 					<div className={styles.icon}>
 						<Icon />
@@ -14,7 +14,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(
 				)}
 				<input ref={ref} {...rest} />
 				{error && <div className={styles.error}>{error.message}</div>}
-			</div>
+			</label>
 		)
 	}
 )

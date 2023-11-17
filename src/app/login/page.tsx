@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function LoginPage() {
-	return <Auth type='login'/>
+	return <Auth type='Login'/>
 }

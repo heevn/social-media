@@ -9,3 +9,7 @@ body {
 	background: linear-gradient(to top right, #0f0104, #14060d) #0f0104;
   position: relative;
 }
+
+h1 {
+	@apply text-2xl font-bold
+}
