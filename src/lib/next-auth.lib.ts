@@ -1,52 +1,55 @@
 import { $host } from '@/app/services/axios.config'
+import userService from '@/app/services/user.service';
 import { User } from '@/types/user.types'
 import NextAuth from 'next-auth/next'
 import Credentials from 'next-auth/providers/credentials'
 
 export default NextAuth({
-	providers: [
-		Credentials({
-			credentials: {
-				email: {
-					type: 'email',
-				},
-				password: { type: 'password' },
-			},
-			async authorize(credentials) {
-				if (!credentials?.email || !credentials.password) return null
-
-				const { data } = await $host.get<User[]>(
-					`/users?filters[email][$eq]=${credentials.email}`
-				)
-				console.log(data)
-
-				return null
-				// if (!data) {
-				// 	const { userCreate } = await grafbase.request(CreateUserByUsername, {
-				// 		username,
-				// 		passwordHash: await hash(password, 12),
-				// 	})
-
-				// 	return {
-				// 		id: userCreate.id,
-				// 		username,
-				// 	}
-				// }
-
-				// const isValid = await compare(password, user.passwordHash)
-
-				// if (!isValid) {
-				// 	throw new Error('Wrong credentials. Try again.')
-				// }
-
-				// return user
-			},
-		}),
-	],
-
-	callbacks: {
-		session({ session, token, user }) {
-			return session
-		},
-	},
-})
+  // Configure one or more authentication providers
+  providers: [
+    Credentials({
+      name: 'Sign in with Email',
+      credentials: {
+        email: { label: 'Email', type: 'text' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials, req) {
+        /**
+         * This function is used to define if the user is authenticated or not.
+         * If authenticated, the function should return an object contains the user data.
+         * If not, the function should return `null`.
+         */
+        if (credentials == null) return null;
+        /**
+         * credentials is defined in the config above.
+         * We can expect it contains two properties: `email` and `password`
+         */
+        try {
+          const { user, jwt } = await userService.signIn({
+            email: credentials.email,
+            password: credentials.password,
+          });
+          return { ...user, jwt };
+        } catch (error) {
+          // Sign In Fail
+          return null;
+        }
+      },
+    }),
+  ],
+  callbacks: {
+    session: async ({ session, token }) => {
+      session.id = token.id;
+      session.jwt = token.jwt;
+      return Promise.resolve(session);
+    },
+    jwt: async ({ token, user }) => {
+      const isSignIn = user ? true : false;
+      if (isSignIn) {
+        token.id = user.id;
+        token.jwt = user.jwt;
+      }
+      return Promise.resolve(token);
+    },
+  },
+});

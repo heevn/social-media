@@ -1,9 +1,15 @@
-// import { $host } from './axios.config';
+import { User } from '@/types/user.types'
+import { $host } from './axios.config'
 
-// class UserService {
+class UserService {
+	async signIn({ email, password }: User) {
+		const data = await $host.post(`/api/auth/local`, {
+			identifier: email,
+			password,
+		})
 
-// 	async auth(credentials) {
-// 		const {data} = await $host.get(`/users?filters[email][$eq]${email}`)
-// 		return data
-// 	} 
-// }
+		return data
+	}
+}
+
+export default new UserService()

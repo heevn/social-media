@@ -1,6 +1,7 @@
 import LayoutClient from '@/components/Layout/LayoutClient'
 import type { Metadata } from 'next'
 import { Viewport } from 'next'
+import { SessionProvider } from 'next-auth/react'
 import { Inter } from 'next/font/google'
 import './globals.scss'
 
@@ -25,7 +26,9 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={inter.className}>
-				<LayoutClient>{children}</LayoutClient>
+				<SessionProvider>
+					<LayoutClient>{children}</LayoutClient>
+				</SessionProvider>
 			</body>
 		</html>
 	)

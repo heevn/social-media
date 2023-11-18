@@ -1,7 +1,5 @@
 export interface User {
-	username: string
+	username?: string
 	email: string
-	confirmed: boolean
-	role: string
-	avatar: string
+	password: string
 }
