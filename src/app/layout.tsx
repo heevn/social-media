@@ -26,9 +26,7 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<body className={inter.className}>
-				<SessionProvider>
-					<LayoutClient>{children}</LayoutClient>
-				</SessionProvider>
+				<LayoutClient>{children}</LayoutClient>
 			</body>
 		</html>
 	)

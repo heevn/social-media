@@ -1,14 +1,13 @@
-import { User } from '@/types/user.types'
+import { AuthFormState } from '@/screens/auth/auth.types'
 import { $host } from './axios.config'
 
 class UserService {
-	async signIn({ email, password }: User) {
-		const data = await $host.post(`/api/auth/local`, {
+	async signIn({ email, password }: AuthFormState) {
+		const result = await $host.post(`/auth/local`, {
 			identifier: email,
-			password,
+			password
 		})
-
-		return data
+		return result.data
 	}
 }
 

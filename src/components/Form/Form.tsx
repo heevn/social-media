@@ -14,9 +14,10 @@ export default function Form({ type }: CustomFormProps) {
 
 	const onSubmit: SubmitHandler<AuthFormState> = async data => {
 		if (type === 'Login') {
-			const result = await signIn('credentials', {
+			await signIn('credentials', {
 				redirect: false,
-				...data,
+				email: data.email,
+				password: data.password
 			})
 		}
 	}
@@ -34,6 +35,9 @@ export default function Form({ type }: CustomFormProps) {
 				className='mb-4'
 			/>
 			<Field
+				{...register('password', {
+					required: true,
+				})}
 				placeholder='Enter password: '
 				type='password'
 				Icon={Lock}
